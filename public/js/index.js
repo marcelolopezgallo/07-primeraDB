@@ -1,7 +1,7 @@
 const socket = io.connect()
 
 async function getProducts(data) {
-    products = await data
+    const products = await data
 
     const recursoRemoto = await fetch('templates/tabla-productos.ejs')
 
