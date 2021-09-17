@@ -3,7 +3,7 @@ const { Server: HttpServer } = require('http')
 const { Server: IOServer } = require('socket.io')
 
 const Contenedor = require('./models/contenedor')
-const contenedor = new Contenedor('./productos.txt')
+const contenedor = new Contenedor(__dirname + '/productos.txt')
 
 const app = express()
 const httpServer = new HttpServer(app)
@@ -22,9 +22,18 @@ app.use(express.static('public'))
 app.use('/', indexRouter)
 app.use('/products', productsRouter)
 
+products = [
+    {
+        title: "Escuadra",
+        price: 123.45,
+        thumbnail: "https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png", "id": 1
+    }
+]
+
 io.on('connection', socket => {
     console.log("Nuevo cliente")
-    
+
+    //socket.emit('productos', products)
     socket.emit('productos', contenedor.getAll())
 })
 
