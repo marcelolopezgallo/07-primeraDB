@@ -1,11 +1,14 @@
 <% if (products.length > 0) { %>
     <div class="table-responsive">
-        <table class="table table-dark">
-            <tr style="color: yellow;">
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Imagen</th>
-            </tr>
+        <table class="table table-sm table-dark">
+            <thead>
+                <tr style="color: yellow;">
+                    <th scope="col">Producto</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col"Imagen</th>
+                </tr>
+            </thead>
+            <tbody>
             <% products.forEach(function(p){ %>
                 <tr>
                     <td>
@@ -22,6 +25,7 @@
                     </td>
                 </tr>
                 <% }) %>
+            </tbody>
         </table>
     </div>
 <%} else{ %>

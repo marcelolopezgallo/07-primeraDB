@@ -6,18 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%=title%></title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="./socket.io/socket.io.js"></script>
     <script src="https://unpkg.com/ejs@3.1.6/ejs.min.js"></script>
 </head>
 
 <body>
+    <div class="container">
     <h1>
         <%= title %>
     </h1>
 
     <br>
 
-    <form action="/products" method="post">
+    <form onsubmit="return addProduct(this)">
 
         <div class="form-group">
             <label for="title"><b>Producto</b></label>
@@ -33,9 +35,12 @@
             <label for="thumbnail"><b>Imagen</b></label>
             <input id="thumbnail" class="form-control" type="text" name="thumbnail">
         </div>
+
+        <input type="submit" value="Enviar">
     
-        <button class="btn btn-success mt-3 mb-5">Enviar</button>
+        <!-- <button class="btn btn-success mt-3 mb-5">Enviar</button> -->
     </form>
+    
 
     <a href="/products">
         <input type="button" value="Get All Products" />
@@ -43,7 +48,18 @@
 
     <div id="productos"></div>
 
+    <h1><%= title_mensajes%></h1>
+    <form onsubmit="return newMessage(this)">
+        Ingrese email: <input type="text" id="email" required>
+        Ingrese Texto: <input type="text" id="mensaje">
+        <input type="submit" value="Enviar">
+    </form>
+    
+    <div id="mensajes"></div>
+
     <script src="./js/index.js"></script>
+    </div>
+
 </body>
 
 </html>

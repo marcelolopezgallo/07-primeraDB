@@ -1,10 +1,11 @@
 const express = require('express')
 const { Server: HttpServer } = require('http')
 const { Server: IOServer } = require('socket.io')
+const { measureMemory } = require('vm')
 
 const Contenedor = require('./models/contenedor')
 const contenedor = new Contenedor(__dirname + '/productos.txt')
-
+const mensajes = []
 const app = express()
 const httpServer = new HttpServer(app)
 const io = new IOServer(httpServer)
@@ -34,7 +35,25 @@ io.on('connection', socket => {
     console.log("Nuevo cliente")
 
     //socket.emit('productos', products)
-    socket.emit('productos', contenedor.getAll())
+    contenedor.getAll().then( products =>{
+        socket.emit('productos', products)
+    })
+
+    socket.on("newProduct", productData => {
+        contenedor.create(productData)
+        .then(() => {
+            contenedor.getAll()
+        })
+        .then(products => {
+            io.sockets.emit('productos', products)
+        })
+    })
+
+    socket.on("newMessage", messageData => {
+        mensajes.push(messageData)
+        console.log(mensajes)
+        io.sockets.emit('mensajes', mensajes)
+    })
 })
 
 const PORT = process.env.PORT || 3000

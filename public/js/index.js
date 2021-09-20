@@ -1,7 +1,7 @@
 const socket = io.connect()
 
 async function getProducts(data) {
-    const products = await data
+    const products = data
 
     const recursoRemoto = await fetch('templates/tabla-productos.ejs')
 
@@ -14,4 +14,31 @@ async function getProducts(data) {
     document.getElementById('productos').innerHTML = html
 }
 
+function addProduct(e){
+    const product = {
+        title: String(document.getElementById('title').value),
+        price: document.getElementById('price').value,
+        thumbnail: String(document.getElementById('thumbnail').value)
+    }
+    socket.emit('newProduct', product)
+}
+
+function newMessage(e){
+    const message = {
+        email: document.getElementById('email').value,
+        time: moment().format('MMMM Do YYYY, h:mm:ss a'),
+        text: document.getElementById('mensaje').value
+    }
+    socket.emit("newMessage", message)
+}
+
+function getMessages(msjs) {
+    console.log(msjs)
+    const mensajesHTML = msjs
+        .map(msj => `${msj.email} ${msj.time} -> Mensaje: ${msj.text}`)
+        .join('<br>')
+    document.getElementById('mensajes').innerHTML = mensajesHTML
+}
+
 socket.on('productos', getProducts)
+socket.on('mensajes', getMessages)
