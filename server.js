@@ -2,10 +2,12 @@ const express = require('express')
 const { Server: HttpServer } = require('http')
 const { Server: IOServer } = require('socket.io')
 const { measureMemory } = require('vm')
-
 const Contenedor = require('./models/contenedor')
+const Mensajes = require('./models/contenedor')
+
 const contenedor = new Contenedor(__dirname + '/productos.txt')
-const mensajes = []
+//const mensajes = []
+const mensajes = new Mensajes(__dirname + '/mensajes.txt')
 const app = express()
 const httpServer = new HttpServer(app)
 const io = new IOServer(httpServer)
@@ -23,26 +25,21 @@ app.use(express.static('public'))
 app.use('/', indexRouter)
 app.use('/products', productsRouter)
 
-products = [
-    {
-        title: "Escuadra",
-        price: 123.45,
-        thumbnail: "https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png", "id": 1
-    }
-]
-
 io.on('connection', socket => {
     console.log("Nuevo cliente")
 
-    //socket.emit('productos', products)
     contenedor.getAll().then( products =>{
         socket.emit('productos', products)
+    })
+
+    mensajes.getAll().then( mensajes => {
+        socket.emit('mensajes', mensajes)
     })
 
     socket.on("newProduct", productData => {
         contenedor.create(productData)
         .then(() => {
-            contenedor.getAll()
+            return contenedor.getAll()
         })
         .then(products => {
             io.sockets.emit('productos', products)
@@ -50,9 +47,13 @@ io.on('connection', socket => {
     })
 
     socket.on("newMessage", messageData => {
-        mensajes.push(messageData)
-        console.log(mensajes)
-        io.sockets.emit('mensajes', mensajes)
+        mensajes.create(messageData)
+        .then(() => {
+            return mensajes.getAll()
+        })
+        .then(mensajes => {
+            io.sockets.emit('mensajes', mensajes)
+        })
     })
 })
 

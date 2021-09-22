@@ -26,16 +26,15 @@ function addProduct(e){
 function newMessage(e){
     const message = {
         email: document.getElementById('email').value,
-        time: moment().format('MMMM Do YYYY, h:mm:ss a'),
+        time: moment(),
         text: document.getElementById('mensaje').value
     }
     socket.emit("newMessage", message)
 }
 
 function getMessages(msjs) {
-    console.log(msjs)
     const mensajesHTML = msjs
-        .map(msj => `${msj.email} ${msj.time} -> Mensaje: ${msj.text}`)
+        .map(msj => `${msj.email} ${moment(msj.time).format("DD/MM/YYYY HH:MM:SS")} -> Mensaje: ${msj.text}`)
         .join('<br>')
     document.getElementById('mensajes').innerHTML = mensajesHTML
 }
