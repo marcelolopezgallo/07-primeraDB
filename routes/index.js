@@ -1,4 +1,4 @@
-const express = require('express')
+import express from 'express'
 const { Router } = express
 
 const router = new Router()
@@ -10,4 +10,6 @@ router.get('/', (req, res) => {
     })
 })
 
-module.exports = router
+export {
+    router
+}

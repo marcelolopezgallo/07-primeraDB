@@ -1,19 +1,16 @@
-const express = require('express')
-const { Server: HttpServer } = require('http')
-const { Server: IOServer } = require('socket.io')
-const { measureMemory } = require('vm')
-const Contenedor = require('./models/contenedor')
-const Mensajes = require('./models/contenedor')
+import express from 'express'
+import { createServer as HttpServer} from "http";
+import { Server as IOServer} from "socket.io";
 
-const contenedor = new Contenedor(__dirname + '/productos.txt')
-//const mensajes = []
-const mensajes = new Mensajes(__dirname + '/mensajes.txt')
+// const Mensajes = require('./models/contenedor')
+// const mensajes = new Mensajes(__dirname + '/mensajes.txt')
+
 const app = express()
 const httpServer = new HttpServer(app)
 const io = new IOServer(httpServer)
 
-const indexRouter = require('./routes/index')
-const { router: productsRouter } = require('./routes/products')
+import {router as indexRouter} from './routes/index.js'
+import { router as productsRouter } from './routes/products.js'
 
 app.set('views', './public/views');
 app.set('view engine', 'ejs');
@@ -25,37 +22,37 @@ app.use(express.static('public'))
 app.use('/', indexRouter)
 app.use('/products', productsRouter)
 
-io.on('connection', socket => {
-    console.log("Nuevo cliente")
+// io.on('connection', socket => {
+//     console.log("Nuevo cliente")
 
-    contenedor.getAll().then( products =>{
-        socket.emit('productos', products)
-    })
+//     contenedor.getAll().then( products =>{
+//         socket.emit('productos', products)
+//     })
 
-    mensajes.getAll().then( mensajes => {
-        socket.emit('mensajes', mensajes)
-    })
+//     mensajes.getAll().then( mensajes => {
+//         socket.emit('mensajes', mensajes)
+//     })
 
-    socket.on("newProduct", productData => {
-        contenedor.create(productData)
-        .then(() => {
-            return contenedor.getAll()
-        })
-        .then(products => {
-            io.sockets.emit('productos', products)
-        })
-    })
+//     socket.on("newProduct", productData => {
+//         contenedor.create(productData)
+//         .then(() => {
+//             return contenedor.getAll()
+//         })
+//         .then(products => {
+//             io.sockets.emit('productos', products)
+//         })
+//     })
 
-    socket.on("newMessage", messageData => {
-        mensajes.create(messageData)
-        .then(() => {
-            return mensajes.getAll()
-        })
-        .then(mensajes => {
-            io.sockets.emit('mensajes', mensajes)
-        })
-    })
-})
+//     socket.on("newMessage", messageData => {
+//         mensajes.create(messageData)
+//         .then(() => {
+//             return mensajes.getAll()
+//         })
+//         .then(mensajes => {
+//             io.sockets.emit('mensajes', mensajes)
+//         })
+//     })
+// })
 
 const PORT = process.env.PORT || 3000
 
